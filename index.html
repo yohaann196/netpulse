@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Netpulse — Is it down?</title>
-  <meta name="description" content="Real-time crowdsourced status for 100+ popular services." />
+  <title>Netpulse — is it down?</title>
+  <meta name="description" content="Crowdsourced status for 100+ popular services. No scraping, no API keys — just people reporting what's broken." />
   <link rel="stylesheet" href="style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -24,7 +24,7 @@
     </header>
 
     <div class="search-wrap">
-      <input type="text" id="search" placeholder="Search 100+ services…" autocomplete="off" oninput="onSearch()" />
+      <input type="text" id="search" placeholder="Search 100+ services…" autocomplete="off" spellcheck="false" oninput="onSearch()" />
     </div>
 
     <div class="filters" id="filters">
@@ -58,7 +58,7 @@
     <div id="service-list"></div>
 
     <footer class="footer">
-      <span>reports powered by github issues</span>
+      <span>reports via github issues · no scraping · no backend</span>
       <a id="suggest-link" href="#" target="_blank" rel="noopener">suggest a service ↗</a>
     </footer>
 
