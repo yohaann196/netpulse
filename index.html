@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Netpulse — Service Status</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="app">
+    <div class="header">
+      <div class="logo">
+        <div class="logo-icon"><div class="logo-dot"></div></div>
+        <div class="logo-text">netpulse <span>/ status</span></div>
+      </div>
+      <div class="header-right">
+        <div class="live-badge"><div class="live-dot"></div> live</div>
+        <div class="last-updated" id="updated-time">updated just now</div>
+      </div>
+    </div>
+
+    <div class="search-bar">
+      <input type="text" id="search-input" placeholder="Search services..." oninput="filterServices()" />
+    </div>
+
+    <div class="filter-pills" id="filters">
+      <button class="pill active" onclick="setFilter('all', this)">All</button>
+      <button class="pill" onclick="setFilter('down', this)">Down</button>
+      <button class="pill" onclick="setFilter('issues', this)">Issues</button>
+      <button class="pill" onclick="setFilter('ok', this)">Operational</button>
+      <button class="pill" onclick="setFilter('social', this)">Social</button>
+      <button class="pill" onclick="setFilter('gaming', this)">Gaming</button>
+      <button class="pill" onclick="setFilter('streaming', this)">Streaming</button>
+      <button class="pill" onclick="setFilter('cloud', this)">Cloud</button>
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-card">
+        <div class="label">Operational</div>
+        <div class="value" id="count-ok">—</div>
+        <div class="sublabel">services normal</div>
+      </div>
+      <div class="summary-card">
+        <div class="label">Issues Detected</div>
+        <div class="value" id="count-issues">—</div>
+        <div class="sublabel">degraded perf</div>
+      </div>
+      <div class="summary-card">
+        <div class="label">Total Reports</div>
+        <div class="value" id="count-reports">—</div>
+        <div class="sublabel">last 2 hours</div>
+      </div>
+    </div>
+
+    <div class="services-grid" id="services-list"></div>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
