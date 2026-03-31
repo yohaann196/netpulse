@@ -26,13 +26,6 @@ open index.html   # macOS
 # or just drag index.html into your browser
 ```
 
-## Deploying to GitHub Pages
-
-1. Push the repo to GitHub
-2. Go to **Settings → Pages**
-3. Set source to **Deploy from a branch → main → / (root)**
-4. Your site will be live at `https://your-username.github.io/netpulse`
-
 ## Adding or Editing Services
 
 All service data lives in `data.js`. Each service looks like this:
@@ -77,6 +70,4 @@ netpulse/
 - [ ] Uptime history graphs (Chart.js)
 - [ ] PWA / installable app
 
-## License
-
-MIT — do whatever you want with it.
+*disclaimer: ai (claude sonnet) was used in the making of this*
