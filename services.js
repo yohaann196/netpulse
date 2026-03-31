@@ -2,7 +2,7 @@
 // the list. edit freely — add, remove, reorder.
 // label must be lowercase, no spaces (it becomes a github label)
 
-const GITHUB_REPO = ''; // 'your-username/netpulse'
+const GITHUB_REPO = ''; // 'yohaann196/netpulse'
 
 const SERVICES = [
   // ── Social & Communication ──────────────────────────────────────────────
