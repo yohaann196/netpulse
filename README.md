@@ -9,6 +9,45 @@ A clean service status monitor powered by **GitHub Issues as a database**.
 
 ---
 
+## Setup (2 minutes)
+
+### 1. Fork or create the repo
+
+Push the `netpulse/` folder to a **public** GitHub repo.
+
+### 2. Set your repo name in `data.js`
+
+```js
+const GITHUB_REPO = 'your-username/netpulse';
+```
+
+### 3. Create the issue labels
+
+Go to your repo → **Issues → Labels → New label** and create one label for each service:
+
+```
+discord  github  cloudflare  aws  notion  linear  vercel  stripe  shopify  twilio
+```
+
+Or run this in your terminal (replace `you/netpulse` and add a GitHub token):
+
+```bash
+REPO="you/netpulse"
+TOKEN="ghp_yourtoken"
+for label in discord github cloudflare aws notion linear vercel stripe shopify twilio; do
+  curl -s -X POST "https://api.github.com/repos/$REPO/labels" \
+    -H "Authorization: token $TOKEN" \
+    -H "Content-Type: application/json" \
+    -d "{\"name\":\"$label\",\"color\":\"0075ca\"}"
+done
+```
+
+### 4. Deploy to GitHub Pages
+
+**Settings → Pages → Deploy from branch → main → / (root)**
+
+Your site goes live at `https://your-username.github.io/netpulse`.
+
 ---
 
 ## How it works
@@ -57,3 +96,6 @@ netpulse/
 
 ---
 
+## License
+
+MIT

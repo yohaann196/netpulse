@@ -67,9 +67,18 @@ function buildCard(svc) {
   }).join('');
 
   const issueUrl = svc.issueUrl || 'https://github.com';
-  const countLabel = svc.reports === 0
-    ? '<span class="report-zero">no reports</span>'
-    : `<span class="report-count">${fmt(svc.reports)} report${svc.reports === 1 ? '' : 's'}</span>`;
+
+  // don't show fake numbers until we have real data
+  const configured = !!GITHUB_REPO;
+  const countLabel = !configured
+    ? '<span class="report-zero">—</span>'
+    : svc.reports === 0
+      ? '<span class="report-zero">no reports</span>'
+      : `<span class="report-count">${fmt(svc.reports)} report${svc.reports === 1 ? '' : 's'}</span>`;
+
+  const subLine = configured
+    ? `${svc.uptime}% uptime &middot; ${countLabel}`
+    : countLabel;
 
   // TODO: add ago-time to each report item ("3h ago" etc)
   return `
@@ -78,7 +87,7 @@ function buildCard(svc) {
         <div class="service-icon" style="background:${svc.color}22;color:${svc.color};">${svc.icon}</div>
         <div class="service-info">
           <div class="service-name">${svc.name}</div>
-          <div class="service-sub">${svc.uptime}% uptime &middot; ${countLabel}</div>
+          <div class="service-sub">${subLine}</div>
         </div>
         <div class="service-right">
           <span class="status-badge ${STATUS_CLASSES[svc.status] || 'status-ok'}">${STATUS_LABELS[svc.status] || svc.status}</span>
@@ -125,9 +134,11 @@ function render() {
     return rank[a.status] - rank[b.status];
   });
 
-  document.getElementById('count-ok').textContent = services.filter(s => s.status === 'ok').length;
-  document.getElementById('count-issues').textContent = services.filter(s => s.status !== 'ok').length;
-  document.getElementById('count-reports').textContent = services.reduce((n, s) => n + s.reports, 0).toLocaleString();
+  // hide summary numbers too if not configured
+  const configured = !!GITHUB_REPO;
+  document.getElementById('count-ok').textContent = configured ? services.filter(s => s.status === 'ok').length : '—';
+  document.getElementById('count-issues').textContent = configured ? services.filter(s => s.status !== 'ok').length : '—';
+  document.getElementById('count-reports').textContent = configured ? services.reduce((n, s) => n + s.reports, 0).toLocaleString() : '—';
 
   const list = document.getElementById('services-list');
   list.innerHTML = visible.length
