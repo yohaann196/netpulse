@@ -1,181 +1,148 @@
-/**
- * app.js — Netpulse application logic
- */
+// app.js
+// started this as a quick weekend project, got carried away
 
-/* ── State ── */
-let activeFilter = 'all';
-let searchQuery  = '';
-let expandedId   = null;
-const startTime  = Date.now();
+let filter = 'all';
+let query = '';
+let expanded = null;
+const bootTime = Date.now();
 
-/* ── Helpers ── */
-function statusLabel(s) {
-  const map = { ok: 'Operational', issues: 'Degraded', down: 'Major Outage', investigating: 'Investigating' };
-  return map[s] || s;
-}
+const STATUS_LABELS = { ok: 'Operational', issues: 'Degraded', down: 'Major Outage', investigating: 'Investigating' };
+const STATUS_CLASSES = { ok: 'status-ok', issues: 'status-issues', down: 'status-down', investigating: 'status-investigating' };
+const BAR_COLORS = { ok: '#639922', issues: '#BA7517', down: '#E24B4A', investigating: '#378ADD' };
 
-function statusClass(s) {
-  const map = { ok: 'status-ok', issues: 'status-issues', down: 'status-down', investigating: 'status-investigating' };
-  return map[s] || 'status-ok';
-}
-
-function barColor(s) {
-  const map = { ok: '#639922', issues: '#BA7517', down: '#E24B4A', investigating: '#378ADD' };
-  return map[s] || '#639922';
-}
+function barColor(s) { return BAR_COLORS[s] || '#639922'; }
 
 function sparkColor(val, status) {
-  if (val === 0) return 'var(--border-light)';
-  if (val <= 2)  return barColor(status) + '88';
-  return barColor(status);
+  if (!val) return 'var(--border-light)';
+  return val <= 1 ? barColor(status) + '88' : barColor(status);
 }
 
-function fmtReports(n) {
+function fmt(n) {
   return n >= 1000 ? (Math.round(n / 100) / 10) + 'k' : String(n);
 }
 
-/* ── Filter / search ── */
 function setFilter(f, el) {
-  activeFilter = f;
+  filter = f;
   document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
   el.classList.add('active');
   render();
 }
 
 function filterServices() {
-  searchQuery = document.getElementById('search-input').value.toLowerCase();
+  query = document.getElementById('search-input').value.toLowerCase();
   render();
 }
 
 function toggleExpand(id) {
-  expandedId = (expandedId === id) ? null : id;
+  expanded = expanded === id ? null : id;
   render();
 }
 
-/* ── Build service card HTML ── */
-function buildCard(s) {
-  const isExp = expandedId === s.id;
-  const maxH   = Math.max(...s.history, 1);
+function reportIssue(e, url) {
+  e.stopPropagation();
+  window.open(url, '_blank', 'noopener');
+}
 
-  /* spark bars */
-  const sparks = s.history.map(v => {
-    const h = Math.max(4, Math.round((v / maxH) * 28));
-    return `<div class="spark-bar" style="height:${h}px;background:${sparkColor(v, s.status)};"></div>`;
+function buildCard(svc) {
+  const open = expanded === svc.id;
+  const maxH = Math.max(...svc.history, 1);
+
+  const sparks = svc.history.map(v => {
+    const h = Math.max(3, Math.round((v / maxH) * 28));
+    return `<div class="spark-bar" style="height:${h}px;background:${sparkColor(v, svc.status)};"></div>`;
   }).join('');
 
-  /* region rows */
-  const maxPct   = Math.max(...s.regions.map(r => r.pct), 1);
-  const regionRows = s.regions.map(r => {
-    const fillW = Math.round((r.pct / maxPct) * 100);
-    return `
-      <div class="region-row">
-        <div class="region-name" title="${r.r}">${r.r}</div>
-        <div class="region-bar-wrap">
-          <div class="region-bar-bg">
-            <div class="region-bar-fill" style="width:${fillW}%;background:${barColor(s.status)};"></div>
-          </div>
-          <div class="region-pct">${r.pct}%</div>
-        </div>
-      </div>`;
-  }).join('');
-
-  /* issue items */
-  const issueItems = s.issues.length
-    ? s.issues.map(i => `
+  const reportItems = svc.issues.length
+    ? svc.issues.map(i => `
         <div class="issue-item">
-          <div class="issue-dot" style="background:${barColor(s.status)};"></div>
+          <div class="issue-dot" style="background:${barColor(svc.status)};"></div>
           <span>${i}</span>
         </div>`).join('')
-    : `<div class="issue-item" style="color:var(--text-tertiary);">No issues reported</div>`;
+    : `<div class="issue-item" style="color:var(--text-tertiary);">nothing filed yet</div>`;
 
-  /* 24-hour timeline */
-  const tlSegs = s.history.map(v => {
-    const bg = v === 0 ? '#639922' : v <= 3 ? '#BA7517' : '#E24B4A';
+  // timeline coloring — green=clean, amber=a few reports, red=lots
+  const tl = svc.history.map(v => {
+    const bg = !v ? '#639922' : v <= 2 ? '#BA7517' : '#E24B4A';
     return `<div class="tl-seg" style="background:${bg};"></div>`;
   }).join('');
 
+  const issueUrl = svc.issueUrl || 'https://github.com';
+  const countLabel = svc.reports === 0
+    ? '<span class="report-zero">no reports</span>'
+    : `<span class="report-count">${fmt(svc.reports)} report${svc.reports === 1 ? '' : 's'}</span>`;
+
+  // TODO: add ago-time to each report item ("3h ago" etc)
   return `
-    <div class="service-card${isExp ? ' expanded' : ''}" id="card-${s.id}">
-      <div class="service-top" onclick="toggleExpand(${s.id})">
-        <div class="service-icon" style="background:${s.color}22;color:${s.color};">${s.icon}</div>
+    <div class="service-card${open ? ' expanded' : ''}" id="card-${svc.id}">
+      <div class="service-top" onclick="toggleExpand(${svc.id})">
+        <div class="service-icon" style="background:${svc.color}22;color:${svc.color};">${svc.icon}</div>
         <div class="service-info">
-          <div class="service-name">${s.name}</div>
-          <div class="service-sub">${s.uptime}% uptime &middot; ${s.reports.toLocaleString()} reports</div>
+          <div class="service-name">${svc.name}</div>
+          <div class="service-sub">${svc.uptime}% uptime &middot; ${countLabel}</div>
         </div>
         <div class="service-right">
-          <div class="report-count">&uarr;${fmtReports(s.reports)}</div>
-          <span class="status-badge ${statusClass(s.status)}">${statusLabel(s.status)}</span>
-          <span class="chevron${isExp ? ' open' : ''}">&#9662;</span>
+          <span class="status-badge ${STATUS_CLASSES[svc.status] || 'status-ok'}">${STATUS_LABELS[svc.status] || svc.status}</span>
+          <span class="chevron${open ? ' open' : ''}">&#9662;</span>
         </div>
       </div>
 
       <div class="spark-row">
         <div class="spark-bars">${sparks}</div>
-        <div class="spark-label">24h</div>
+        <div class="spark-label">24h activity</div>
       </div>
 
-      <div class="detail-panel${isExp ? ' open' : ''}">
-        <div class="detail-sections">
+      <div class="detail-panel${open ? ' open' : ''}">
+        <div class="detail-top">
           <div class="detail-section">
-            <h4>Reports by region</h4>
-            ${regionRows}
+            <h4>Open reports</h4>
+            ${reportItems}
           </div>
           <div class="detail-section">
-            <h4>Known issues</h4>
-            ${issueItems}
+            <h4>Something broken?</h4>
+            <p class="report-explainer">File a GitHub issue — it shows up here as a live report. Takes ~30 seconds.</p>
+            <button class="report-btn" onclick="reportIssue(event, '${issueUrl}')">+ report issue</button>
+            ${GITHUB_REPO ? `<a class="issues-link" href="https://github.com/${GITHUB_REPO}/issues?q=label%3A${svc.label}" target="_blank" rel="noopener">all reports on GitHub ↗</a>` : ''}
           </div>
         </div>
         <div class="timeline-section">
-          <h4>24-hour status timeline</h4>
-          <div class="timeline-bar">${tlSegs}</div>
+          <h4>last 24h</h4>
+          <div class="timeline-bar">${tl}</div>
           <div class="tl-label"><span>24h ago</span><span>now</span></div>
         </div>
       </div>
     </div>`;
 }
 
-/* ── Main render ── */
 function render() {
-  /* filter */
-  const filtered = services.filter(s => {
-    const matchFilter = activeFilter === 'all' ||
-                        activeFilter === s.category ||
-                        activeFilter === s.status;
-    const matchSearch = s.name.toLowerCase().includes(searchQuery);
-    return matchFilter && matchSearch;
+  const visible = services.filter(s => {
+    const matchesFilter = filter === 'all' || filter === s.category || filter === s.status;
+    return matchesFilter && s.name.toLowerCase().includes(query);
   });
 
-  /* sort: down → issues → investigating → ok */
-  const order = { down: 0, issues: 1, investigating: 2, ok: 3 };
-  filtered.sort((a, b) => order[a.status] - order[b.status]);
+  // worst status first
+  visible.sort((a, b) => {
+    const rank = { down: 0, issues: 1, investigating: 2, ok: 3 };
+    return rank[a.status] - rank[b.status];
+  });
 
-  /* summary counters */
-  const countOk      = services.filter(s => s.status === 'ok').length;
-  const countIssues  = services.filter(s => s.status !== 'ok').length;
-  const totalReports = services.reduce((sum, s) => sum + s.reports, 0);
+  document.getElementById('count-ok').textContent = services.filter(s => s.status === 'ok').length;
+  document.getElementById('count-issues').textContent = services.filter(s => s.status !== 'ok').length;
+  document.getElementById('count-reports').textContent = services.reduce((n, s) => n + s.reports, 0).toLocaleString();
 
-  document.getElementById('count-ok').textContent      = countOk;
-  document.getElementById('count-issues').textContent  = countIssues;
-  document.getElementById('count-reports').textContent = totalReports.toLocaleString();
-
-  /* render cards */
   const list = document.getElementById('services-list');
-  if (filtered.length === 0) {
-    list.innerHTML = `<div class="empty-state">No services match your filter.</div>`;
-  } else {
-    list.innerHTML = filtered.map(buildCard).join('');
-  }
+  list.innerHTML = visible.length
+    ? visible.map(buildCard).join('')
+    : `<div class="empty-state">nothing matches that filter</div>`;
 }
 
-/* ── Live clock ── */
+// updates the "N minutes ago" text — runs every 30s which is fine
+// (could do every 60s tbh but whatever)
 function startClock() {
   const el = document.getElementById('updated-time');
   setInterval(() => {
-    const mins = Math.floor((Date.now() - startTime) / 60000);
-    el.textContent = mins === 0 ? 'updated just now' : `updated ${mins}m ago`;
+    const mins = Math.floor((Date.now() - bootTime) / 60000);
+    el.textContent = mins < 1 ? 'just now' : `${mins}m ago`;
   }, 30000);
 }
 
-/* ── Boot ── */
-render();
 startClock();

@@ -1,73 +1,101 @@
 # Netpulse
 
-A clean, fast, ad-free service status monitor — a better Downdetector.
+A clean service status monitor powered by **GitHub Issues as a database**.
 
-![Status: Operational](https://img.shields.io/badge/status-operational-brightgreen)
+- Users click "Report issue" → lands on a pre-filled GitHub Issue
+- The GitHub API (CORS-safe, no proxy needed) counts open issues per service
+- Report counts update live on every page load
+- Zero backend. Zero database. Zero cost.
 
-## Features
+---
 
-- **Live status dashboard** — see which services are up, degraded, or down at a glance
-- **Severity sorting** — outages bubble to the top automatically
-- **Spark charts** — 24-hour report history per service rendered inline
-- **Expandable detail panels** — regional breakdown, known issues, and a status timeline
-- **Search + filter** — by category (Social, Gaming, Streaming, Cloud) or by status
-- **Dark mode** — follows your system preference automatically
-- **No backend required** — pure HTML/CSS/JS, works as a static site
+## Setup (2 minutes)
 
-## Getting Started
+### 1. Fork or create the repo
 
-1. Clone or download this repo
-2. Open `index.html` in your browser — no build step, no dependencies
+Push the `netpulse/` folder to a **public** GitHub repo.
 
-```bash
-git clone https://github.com/your-username/netpulse.git
-cd netpulse
-open index.html   # macOS
-# or just drag index.html into your browser
-```
-
-## Adding or Editing Services
-
-All service data lives in `data.js`. Each service looks like this:
+### 2. Set your repo name in `data.js`
 
 ```js
-{
-  id: 11,
-  name: 'Twitch',
-  icon: '◈',
-  color: '#9146FF',
-  status: 'ok',            // 'ok' | 'issues' | 'down' | 'investigating'
-  category: 'streaming',   // 'social' | 'gaming' | 'streaming' | 'cloud'
-  reports: 54,
-  uptime: 99.7,
-  regions: [
-    { r: 'North America', pct: 1 },
-    { r: 'Europe',        pct: 1 },
-  ],
-  issues: [],
-  history: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-},
+const GITHUB_REPO = 'your-username/netpulse';
 ```
 
-Copy any existing entry, update the fields, and the UI picks it up automatically.
+### 3. Create the issue labels
 
-## Project Structure
+Go to your repo → **Issues → Labels → New label** and create one label for each service:
+
+```
+discord  github  cloudflare  aws  notion  linear  vercel  stripe  shopify  twilio
+```
+
+Or run this in your terminal (replace `you/netpulse` and add a GitHub token):
+
+```bash
+REPO="you/netpulse"
+TOKEN="ghp_yourtoken"
+for label in discord github cloudflare aws notion linear vercel stripe shopify twilio; do
+  curl -s -X POST "https://api.github.com/repos/$REPO/labels" \
+    -H "Authorization: token $TOKEN" \
+    -H "Content-Type: application/json" \
+    -d "{\"name\":\"$label\",\"color\":\"0075ca\"}"
+done
+```
+
+### 4. Deploy to GitHub Pages
+
+**Settings → Pages → Deploy from branch → main → / (root)**
+
+Your site goes live at `https://your-username.github.io/netpulse`.
+
+---
+
+## How it works
+
+```
+User clicks "Report issue"
+        ↓
+Pre-filled GitHub Issue opens (label applied automatically)
+        ↓
+Issue count fetched via GitHub API on next page load
+        ↓
+Report counts update, status badge changes
+```
+
+The GitHub REST API returns open issues from public repos with full CORS headers — no worker, no server, no proxy required. The page fetches `https://api.github.com/repos/{owner}/{repo}/issues` directly from the browser.
+
+**Status thresholds:**
+- 0 reports → Operational
+- 1–3 reports → Degraded
+- 4+ reports → Major Outage
+
+---
+
+## Adding services
+
+Edit the `SERVICE_DEFS` array in `data.js`:
+
+```js
+{ id:11, name:'Twitch', icon:'◈', color:'#9146FF', category:'streaming', label:'twitch' },
+```
+
+Then create the matching `twitch` label in your GitHub repo.
+
+---
+
+## Project structure
 
 ```
 netpulse/
-├── index.html   — markup and layout
-├── style.css    — all styles (light + dark mode)
-├── data.js      — service definitions (edit this to add services)
-├── app.js       — rendering and interaction logic
+├── index.html   markup
+├── style.css    styles (light + dark mode)
+├── data.js      GitHub API fetcher — set GITHUB_REPO here
+├── app.js       rendering and interaction
 └── README.md
 ```
 
-## Roadmap
+---
 
-- [ ] Real-time data via a backend API or scraping
-- [ ] User report submission ("I'm having issues too")
-- [ ] Email / webhook alerts for status changes
-- [ ] Uptime history graphs (Chart.js)
-- [ ] PWA / installable app
+## License
 
-*disclaimer: ai (claude sonnet) was used in the making of this*
+MIT

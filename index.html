@@ -10,6 +10,7 @@
 </head>
 <body>
   <div class="app">
+
     <div class="header">
       <div class="logo">
         <div class="logo-icon"><div class="logo-dot"></div></div>
@@ -22,7 +23,7 @@
     </div>
 
     <div class="search-bar">
-      <input type="text" id="search-input" placeholder="Search services..." oninput="filterServices()" />
+      <input type="text" id="search-input" placeholder="Search services…" oninput="filterServices()" />
     </div>
 
     <div class="filter-pills" id="filters">
@@ -31,8 +32,6 @@
       <button class="pill" onclick="setFilter('issues', this)">Issues</button>
       <button class="pill" onclick="setFilter('ok', this)">Operational</button>
       <button class="pill" onclick="setFilter('social', this)">Social</button>
-      <button class="pill" onclick="setFilter('gaming', this)">Gaming</button>
-      <button class="pill" onclick="setFilter('streaming', this)">Streaming</button>
       <button class="pill" onclick="setFilter('cloud', this)">Cloud</button>
     </div>
 
@@ -45,19 +44,21 @@
       <div class="summary-card">
         <div class="label">Issues Detected</div>
         <div class="value" id="count-issues">—</div>
-        <div class="sublabel">degraded perf</div>
+        <div class="sublabel">user-reported</div>
       </div>
       <div class="summary-card">
-        <div class="label">Total Reports</div>
+        <div class="label">Open Reports</div>
         <div class="value" id="count-reports">—</div>
-        <div class="sublabel">last 2 hours</div>
+        <div class="sublabel">via GitHub Issues</div>
       </div>
     </div>
 
     <div class="services-grid" id="services-list"></div>
+
   </div>
 
   <script src="data.js"></script>
   <script src="app.js"></script>
+  <script>loadLiveData();</script>
 </body>
 </html>

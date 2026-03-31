@@ -500,3 +500,70 @@ body {
   .detail-sections { grid-template-columns: 1fr; }
   .service-right .report-count { display: none; }
 }
+
+/* ── Report button ── */
+.report-btn {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 7px 14px;
+  border-radius: var(--radius-md);
+  border: 0.5px solid var(--border-medium);
+  background: transparent;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.report-btn:hover {
+  background: var(--bg-secondary);
+  border-color: var(--border-strong);
+}
+.report-btn:active {
+  transform: scale(0.97);
+}
+
+/* ── Issues link ── */
+.issues-link {
+  display: block;
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--text-tertiary);
+  text-decoration: none;
+  font-family: var(--font-mono);
+}
+.issues-link:hover { color: var(--text-secondary); }
+
+/* ── Report explainer ── */
+.report-explainer {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 4px;
+}
+
+/* ── Detail top layout ── */
+.detail-top {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+/* ── Report count labels ── */
+.report-count {
+  font-size: 12px;
+  font-family: var(--font-mono);
+  color: var(--text-secondary);
+}
+.report-zero {
+  font-size: 12px;
+  font-family: var(--font-mono);
+  color: var(--text-tertiary);
+}
+
+/* ── Responsive ── */
+@media (max-width: 500px) {
+  .detail-top { grid-template-columns: 1fr; }
+}

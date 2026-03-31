@@ -1,218 +1,139 @@
-/**
- * data.js — Service definitions for Netpulse
- *
- * Each service object has:
- *   id        {number}  Unique identifier
- *   name      {string}  Display name
- *   icon      {string}  Unicode symbol used as the icon
- *   color     {string}  Brand hex color (used for icon bg tint)
- *   status    {string}  'ok' | 'issues' | 'down' | 'investigating'
- *   category  {string}  'social' | 'gaming' | 'streaming' | 'cloud'
- *   reports   {number}  Number of user reports in the last 2 hours
- *   uptime    {number}  Uptime percentage (last 30 days)
- *   regions   {Array}   [{r: string, pct: number}] — % of reports per region
- *   issues    {Array}   Known issue strings
- *   history   {Array}   24 hourly report buckets (0 = none, 10 = high)
- *
- * To add a new service, copy an existing entry and update the fields.
- * The UI will pick it up automatically on next render.
- */
+// data.js
+// uses github issues as a makeshift database — each service has a label,
+// users file issues, we count them. no backend, no database, just vibes.
+//
+// setup:
+//   1. make a public github repo
+//   2. set GITHUB_REPO below ("you/netpulse")
+//   3. create labels in your repo matching the `label` fields below
+//   4. deploy to github pages, done
 
-const services = [
-  {
-    id: 1,
-    name: 'YouTube',
-    icon: '▶',
-    color: '#FF0000',
-    status: 'ok',
-    category: 'streaming',
-    reports: 142,
-    uptime: 99.8,
-    regions: [
-      { r: 'North America', pct: 2 },
-      { r: 'Europe',        pct: 1 },
-      { r: 'Asia',          pct: 3 },
-      { r: 'South America', pct: 1 },
-    ],
-    issues: ['Occasional buffering on 4K streams', 'Studio upload latency +200ms'],
-    history: [0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  },
-  {
-    id: 2,
-    name: 'Discord',
-    icon: '◈',
-    color: '#5865F2',
-    status: 'issues',
-    category: 'social',
-    reports: 4821,
-    uptime: 94.1,
-    regions: [
-      { r: 'North America', pct: 18 },
-      { r: 'Europe',        pct: 22 },
-      { r: 'Asia',          pct: 12 },
-      { r: 'South America', pct: 8  },
-    ],
-    issues: [
-      'Voice connections dropping in large servers',
-      'Message delivery delays 3–12s',
-      'File uploads failing intermittently',
-    ],
-    history: [0,0,0,0,0,0,0,1,2,3,4,3,4,5,4,4,3,3,2,2,1,1,1,2],
-  },
-  {
-    id: 3,
-    name: 'GitHub',
-    icon: '◉',
-    color: '#24292f',
-    status: 'ok',
-    category: 'cloud',
-    reports: 89,
-    uptime: 99.95,
-    regions: [
-      { r: 'North America', pct: 1 },
-      { r: 'Europe',        pct: 1 },
-      { r: 'Asia',          pct: 2 },
-      { r: 'South America', pct: 1 },
-    ],
-    issues: ['Minor CI/CD queue delays'],
-    history: [0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0],
-  },
-  {
-    id: 4,
-    name: 'Roblox',
-    icon: '◧',
-    color: '#E8081B',
-    status: 'down',
-    category: 'gaming',
-    reports: 38402,
-    uptime: 61.2,
-    regions: [
-      { r: 'North America', pct: 72 },
-      { r: 'Europe',        pct: 68 },
-      { r: 'Asia',          pct: 45 },
-      { r: 'South America', pct: 80 },
-    ],
-    issues: [
-      'Login servers offline',
-      'Game servers unresponsive',
-      'Marketplace inaccessible',
-      'Avatar editor not loading',
-    ],
-    history: [0,0,0,0,0,1,2,4,6,8,9,10,10,9,9,8,8,7,7,8,8,9,9,10],
-  },
-  {
-    id: 5,
-    name: 'Instagram',
-    icon: '⬡',
-    color: '#E1306C',
-    status: 'ok',
-    category: 'social',
-    reports: 311,
-    uptime: 99.3,
-    regions: [
-      { r: 'North America', pct: 3 },
-      { r: 'Europe',        pct: 2 },
-      { r: 'Asia',          pct: 4 },
-      { r: 'South America', pct: 5 },
-    ],
-    issues: ['Story views occasionally not updating'],
-    history: [0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0],
-  },
-  {
-    id: 6,
-    name: 'Netflix',
-    icon: '▣',
-    color: '#E50914',
-    status: 'ok',
-    category: 'streaming',
-    reports: 204,
-    uptime: 99.6,
-    regions: [
-      { r: 'North America', pct: 2 },
-      { r: 'Europe',        pct: 3 },
-      { r: 'Asia',          pct: 2 },
-      { r: 'South America', pct: 4 },
-    ],
-    issues: ['Subtitle sync issues on select titles'],
-    history: [0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
-  },
-  {
-    id: 7,
-    name: 'AWS',
-    icon: '⬢',
-    color: '#FF9900',
-    status: 'issues',
-    category: 'cloud',
-    reports: 1238,
-    uptime: 97.8,
-    regions: [
-      { r: 'us-east-1',        pct: 15 },
-      { r: 'eu-west-1',        pct: 8  },
-      { r: 'ap-southeast-1',   pct: 5  },
-      { r: 'us-west-2',        pct: 3  },
-    ],
-    issues: [
-      'EC2 instance launch failures in us-east-1',
-      'RDS connection timeouts elevated',
-      'S3 PUT latency +400ms in us-east-1',
-    ],
-    history: [0,0,0,0,0,0,0,0,0,1,2,3,4,4,3,3,2,2,2,1,1,1,1,1],
-  },
-  {
-    id: 8,
-    name: 'Steam',
-    icon: '⊕',
-    color: '#1b2838',
-    status: 'ok',
-    category: 'gaming',
-    reports: 178,
-    uptime: 99.4,
-    regions: [
-      { r: 'North America', pct: 2 },
-      { r: 'Europe',        pct: 2 },
-      { r: 'Asia',          pct: 3 },
-      { r: 'South America', pct: 2 },
-    ],
-    issues: ['Store page load times slightly elevated'],
-    history: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0],
-  },
-  {
-    id: 9,
-    name: 'Spotify',
-    icon: '◎',
-    color: '#1DB954',
-    status: 'ok',
-    category: 'streaming',
-    reports: 95,
-    uptime: 99.9,
-    regions: [
-      { r: 'North America', pct: 1 },
-      { r: 'Europe',        pct: 1 },
-      { r: 'Asia',          pct: 1 },
-      { r: 'South America', pct: 2 },
-    ],
-    issues: [],
-    history: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  },
-  {
-    id: 10,
-    name: 'Cloudflare',
-    icon: '☁',
-    color: '#F48120',
-    status: 'investigating',
-    category: 'cloud',
-    reports: 657,
-    uptime: 98.9,
-    regions: [
-      { r: 'North America', pct: 5 },
-      { r: 'Europe',        pct: 7 },
-      { r: 'Asia',          pct: 6 },
-      { r: 'South America', pct: 4 },
-    ],
-    issues: [
-      'Investigating elevated error rates on proxy',
-      'Some DDoS mitigation delays reported',
-    ],
-    history: [0,0,0,0,0,0,0,0,0,0,1,2,2,2,2,1,1,1,1,1,1,1,1,1],
-  },
+const GITHUB_REPO = ''; // e.g. 'alice/netpulse'
+
+const SERVICES = [
+  { id: 1,  name: 'Discord',    icon: '◈', color: '#5865F2', category: 'social', label: 'discord' },
+  { id: 2,  name: 'GitHub',     icon: '◉', color: '#24292f', category: 'cloud',  label: 'github' },
+  { id: 3,  name: 'Cloudflare', icon: '☁', color: '#F48120', category: 'cloud',  label: 'cloudflare' },
+  { id: 4,  name: 'AWS',        icon: '⬢', color: '#FF9900', category: 'cloud',  label: 'aws' },
+  { id: 5,  name: 'Notion',     icon: '▣', color: '#6B6B6B', category: 'cloud',  label: 'notion' },
+  { id: 6,  name: 'Linear',     icon: '◎', color: '#5E6AD2', category: 'cloud',  label: 'linear' },
+  { id: 7,  name: 'Vercel',     icon: '▲', color: '#171717', category: 'cloud',  label: 'vercel' },
+  { id: 8,  name: 'Stripe',     icon: '⬡', color: '#635BFF', category: 'cloud',  label: 'stripe' },
+  { id: 9,  name: 'Shopify',    icon: '◧', color: '#96BF48', category: 'cloud',  label: 'shopify' },
+  { id: 10, name: 'Twilio',     icon: '⊕', color: '#F22F46', category: 'social', label: 'twilio' },
 ];
+
+let services = makeBlank();
+
+function makeBlank() {
+  return SERVICES.map(s => ({
+    ...s,
+    status: 'ok',
+    reports: 0,
+    uptime: 99.9,
+    issues: [],
+    history: Array(24).fill(0),
+    issueUrl: issueUrl(s),
+  }));
+}
+
+function issueUrl(svc) {
+  if (!GITHUB_REPO) return 'https://github.com';
+  const t = encodeURIComponent(`[${svc.name}] issue report`);
+  const b = encodeURIComponent(
+    `**Service:** ${svc.name}\n**When:** ${new Date().toUTCString()}\n\n**What's happening:**\n\n`
+  );
+  return `https://github.com/${GITHUB_REPO}/issues/new?title=${t}&body=${b}&labels=${svc.label}`;
+}
+
+function toStatus(n) {
+  if (n === 0) return 'ok';
+  if (n <= 3)  return 'issues';
+  return 'down';
+}
+
+function processIssues(svc, raw) {
+  const open = raw.filter(i => i.state === 'open');
+
+  const titles = open.slice(0, 4).map(i => {
+    // strip "[ServiceName]" prefix if someone followed the template
+    const t = i.title.replace(/^\[.+?\]\s*/, '');
+    return t.length > 60 ? t.slice(0, 57) + '…' : t;
+  });
+
+  // bucket issues into 24 hourly slots for the sparkline
+  const now = Date.now();
+  const hist = Array(24).fill(0);
+  raw.forEach(i => {
+    const hrs = (now - new Date(i.created_at).getTime()) / 3_600_000;
+    if (hrs < 24) hist[23 - Math.min(23, Math.floor(hrs))]++;
+  });
+
+  const status = toStatus(open.length);
+
+  return {
+    ...svc,
+    status,
+    reports: open.length,
+    uptime: status === 'ok' ? 99.9 : status === 'issues' ? 97.0 : 89.0,
+    issues: titles,
+    history: hist,
+    issueUrl: issueUrl(svc),
+  };
+}
+
+function showBanner(msg, type) {
+  let el = document.getElementById('np-banner');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'np-banner';
+    document.querySelector('.app').insertBefore(el, document.getElementById('filters'));
+  }
+  const styles = {
+    loading: 'background:var(--bg-secondary);border-color:var(--border-light);color:var(--text-secondary)',
+    error:   'background:#FCEBEB;border-color:#F7C1C1;color:#A32D2D',
+    info:    'background:#E6F1FB;border-color:#B5D4F4;color:#185FA5',
+  };
+  el.style.cssText = `padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:1rem;border:0.5px solid;${styles[type]}`;
+  el.innerHTML = msg;
+}
+
+function hideBanner() {
+  document.getElementById('np-banner')?.remove();
+}
+
+async function loadLiveData() {
+  if (!GITHUB_REPO) {
+    showBanner('Set <code>GITHUB_REPO</code> in data.js to pull live reports from GitHub.', 'info');
+    render();
+    return;
+  }
+
+  showBanner('Loading…', 'loading');
+
+  try {
+    // github's api sends CORS headers on public repos, so this just works
+    // unauthenticated limit is 60 req/hr per IP — fine for a status page
+    const url = `https://api.github.com/repos/${GITHUB_REPO}/issues?state=all&per_page=100&sort=created&direction=desc`;
+    const res = await fetch(url, { headers: { Accept: 'application/vnd.github.v3+json' } });
+
+    if (res.status === 404) throw new Error(`repo not found — is "${GITHUB_REPO}" public?`);
+    if (!res.ok) throw new Error(`GitHub returned ${res.status}`);
+
+    const all = await res.json();
+    console.log(`[netpulse] got ${all.length} issues from github`); // FIXME: remove before prod
+
+    services = SERVICES.map(svc => {
+      const mine = all.filter(i => i.labels.some(l => l.name === svc.label));
+      return processIssues(svc, mine);
+    });
+
+    hideBanner();
+    render();
+  } catch (err) {
+    console.error('[netpulse] fetch failed', err);
+    showBanner(`couldn't load data: ${err.message}`, 'error');
+    services = makeBlank();
+    render();
+  }
+}
