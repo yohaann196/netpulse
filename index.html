@@ -3,62 +3,69 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Netpulse — Service Status</title>
+  <title>Netpulse — Is it down?</title>
+  <meta name="description" content="Real-time crowdsourced status for 100+ popular services." />
   <link rel="stylesheet" href="style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 </head>
 <body>
   <div class="app">
 
-    <div class="header">
+    <header class="header">
       <div class="logo">
-        <div class="logo-icon"><div class="logo-dot"></div></div>
-        <div class="logo-text">netpulse <span>/ status</span></div>
+        <div class="logo-mark"><div class="logo-pulse"></div></div>
+        <span class="logo-text">netpulse</span>
       </div>
-      <div class="header-right">
-        <div class="live-badge"><div class="live-dot"></div> live</div>
-        <div class="last-updated" id="updated-time">updated just now</div>
+      <div class="header-meta">
+        <span class="live-pip"></span>
+        <span class="last-updated" id="last-updated">just now</span>
+      </div>
+    </header>
+
+    <div class="search-wrap">
+      <input type="text" id="search" placeholder="Search 100+ services…" autocomplete="off" oninput="onSearch()" />
+    </div>
+
+    <div class="filters" id="filters">
+      <button class="pill active" onclick="setFilter('all',this)">All</button>
+      <button class="pill" onclick="setFilter('down',this)">Down</button>
+      <button class="pill" onclick="setFilter('issues',this)">Degraded</button>
+      <button class="pill" onclick="setFilter('social',this)">Social</button>
+      <button class="pill" onclick="setFilter('streaming',this)">Streaming</button>
+      <button class="pill" onclick="setFilter('gaming',this)">Gaming</button>
+      <button class="pill" onclick="setFilter('cloud',this)">Cloud</button>
+      <button class="pill" onclick="setFilter('developer',this)">Dev tools</button>
+      <button class="pill" onclick="setFilter('finance',this)">Finance</button>
+      <button class="pill" onclick="setFilter('ai',this)">AI</button>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-val" id="s-ok">—</div>
+        <div class="stat-label">operational</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" id="s-issues">—</div>
+        <div class="stat-label">with issues</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" id="s-reports">—</div>
+        <div class="stat-label">open reports</div>
       </div>
     </div>
 
-    <div class="search-bar">
-      <input type="text" id="search-input" placeholder="Search services…" oninput="filterServices()" />
-    </div>
+    <div id="service-list"></div>
 
-    <div class="filter-pills" id="filters">
-      <button class="pill active" onclick="setFilter('all', this)">All</button>
-      <button class="pill" onclick="setFilter('down', this)">Down</button>
-      <button class="pill" onclick="setFilter('issues', this)">Issues</button>
-      <button class="pill" onclick="setFilter('ok', this)">Operational</button>
-      <button class="pill" onclick="setFilter('social', this)">Social</button>
-      <button class="pill" onclick="setFilter('cloud', this)">Cloud</button>
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-card">
-        <div class="label">Operational</div>
-        <div class="value" id="count-ok">—</div>
-        <div class="sublabel">services normal</div>
-      </div>
-      <div class="summary-card">
-        <div class="label">Issues Detected</div>
-        <div class="value" id="count-issues">—</div>
-        <div class="sublabel">user-reported</div>
-      </div>
-      <div class="summary-card">
-        <div class="label">Open Reports</div>
-        <div class="value" id="count-reports">—</div>
-        <div class="sublabel">via GitHub Issues</div>
-      </div>
-    </div>
-
-    <div class="services-grid" id="services-list"></div>
+    <footer class="footer">
+      <span>reports powered by github issues</span>
+      <a id="suggest-link" href="#" target="_blank" rel="noopener">suggest a service ↗</a>
+    </footer>
 
   </div>
 
-  <script src="data.js"></script>
+  <script src="services.js"></script>
   <script src="app.js"></script>
-  <script>loadLiveData();</script>
+  <script>boot();</script>
 </body>
 </html>

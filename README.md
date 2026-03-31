@@ -1,101 +1,63 @@
-# Netpulse
+# netpulse
 
-A clean service status monitor powered by **GitHub Issues as a database**.
-
-- Users click "Report issue" → lands on a pre-filled GitHub Issue
-- The GitHub API (CORS-safe, no proxy needed) counts open issues per service
-- Report counts update live on every page load
-- Zero backend. Zero database. Zero cost.
+crowdsourced service status. users file github issues, page counts them.
 
 ---
 
-## Setup (2 minutes)
+## setup
 
-### 1. Fork or create the repo
+1. create a public github repo
+2. set `GITHUB_REPO` in `services.js` — e.g. `'alice/netpulse'`
+3. create github labels for every service (see label-setup below)
+4. deploy to github pages: settings → pages → main → / (root)
 
-Push the `netpulse/` folder to a **public** GitHub repo.
+---
 
-### 2. Set your repo name in `data.js`
+## adding a service
+
+add an entry to `SERVICES` in `services.js`:
 
 ```js
-const GITHUB_REPO = 'your-username/netpulse';
+{ id: 101, name: 'Cloudinary', icon: '◈', color: '#3448C5', category: 'developer', label: 'cloudinary' },
 ```
 
-### 3. Create the issue labels
+then create the matching label in the repo. use `add-service.html` locally to generate both the snippet and the curl command without touching code.
 
-Go to your repo → **Issues → Labels → New label** and create one label for each service:
+---
 
-```
-discord  github  cloudflare  aws  notion  linear  vercel  stripe  shopify  twilio
-```
+## creating labels (one-time setup)
 
-Or run this in your terminal (replace `you/netpulse` and add a GitHub token):
+replace `you/netpulse` and add a token with `repo` scope:
 
 ```bash
 REPO="you/netpulse"
-TOKEN="ghp_yourtoken"
-for label in discord github cloudflare aws notion linear vercel stripe shopify twilio; do
+TOKEN="ghp_..."
+
+for label in discord slack twitter-x instagram facebook whatsapp telegram reddit linkedin snapchat tiktok pinterest mastodon twitch zoom teams youtube netflix spotify disney-plus apple-music soundcloud hulu hbo-max amazon-prime apple-tv peacock deezer plex steam playstation xbox roblox epic-games riot-games battle-net ea-origin nintendo minecraft ubisoft gog aws google-cloud azure cloudflare vercel netlify heroku digitalocean fastly akamai render fly-io railway github gitlab bitbucket npm pypi docker-hub sentry datadog pagerduty jira confluence linear notion figma supabase firebase mongodb-atlas planetscale neon postman openai anthropic google-gemini midjourney hugging-face replicate perplexity cursor stripe paypal shopify square coinbase plaid braintree adyen google-workspace dropbox onedrive twilio sendgrid mailchimp intercom zendesk hubspot salesforce service-request; do
   curl -s -X POST "https://api.github.com/repos/$REPO/labels" \
     -H "Authorization: token $TOKEN" \
     -H "Content-Type: application/json" \
-    -d "{\"name\":\"$label\",\"color\":\"0075ca\"}"
+    -d "{\"name\":\"$label\",\"color\":\"0075ca\"}" > /dev/null
+  echo "created: $label"
 done
 ```
 
-### 4. Deploy to GitHub Pages
+---
 
-**Settings → Pages → Deploy from branch → main → / (root)**
+## managing reports
 
-Your site goes live at `https://your-username.github.io/netpulse`.
+- close spam/invalid issues on github — closed issues don't count
+- `service-request` labeled issues = someone wants a new service added
+- all other issues are outage reports and count toward report totals
 
 ---
 
-## How it works
+## how status thresholds work
 
-```
-User clicks "Report issue"
-        ↓
-Pre-filled GitHub Issue opens (label applied automatically)
-        ↓
-Issue count fetched via GitHub API on next page load
-        ↓
-Report counts update, status badge changes
-```
+| open reports | status shown |
+|---|---|
+| 0 | Operational |
+| 1–3 | Degraded |
+| 4+ | Major Outage |
 
-The GitHub REST API returns open issues from public repos with full CORS headers — no worker, no server, no proxy required. The page fetches `https://api.github.com/repos/{owner}/{repo}/issues` directly from the browser.
-
-**Status thresholds:**
-- 0 reports → Operational
-- 1–3 reports → Degraded
-- 4+ reports → Major Outage
-
----
-
-## Adding services
-
-Edit the `SERVICE_DEFS` array in `data.js`:
-
-```js
-{ id:11, name:'Twitch', icon:'◈', color:'#9146FF', category:'streaming', label:'twitch' },
-```
-
-Then create the matching `twitch` label in your GitHub repo.
-
----
-
-## Project structure
-
-```
-netpulse/
-├── index.html   markup
-├── style.css    styles (light + dark mode)
-├── data.js      GitHub API fetcher — set GITHUB_REPO here
-├── app.js       rendering and interaction
-└── README.md
-```
-
----
-
-## License
-
-MIT
+adjust `toStatus()` in `app.js` if needed.
