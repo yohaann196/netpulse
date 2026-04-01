@@ -1,0 +1,148 @@
+name: Outage Report
+description: Report an outage or degradation for a tracked service.
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## ⚠️ IMPORTANT — You MUST apply a label before submitting
+        **Your report will NOT be processed unless you manually select the correct service label on the right-hand side of this page.**
+        Labels are how NetPulse links your report to the affected service.
+        **⛔ Do NOT submit without picking a label. Unlabelled reports are ignored.**
+  - type: dropdown
+    id: service
+    attributes:
+      label: Affected Service
+      description: Select the service that is experiencing issues.
+      options:
+        - Discord
+        - Slack
+        - Twitter / X
+        - Instagram
+        - Facebook
+        - WhatsApp
+        - Telegram
+        - Reddit
+        - LinkedIn
+        - Snapchat
+        - TikTok
+        - Pinterest
+        - Mastodon
+        - Zoom
+        - Teams
+        - Twitch
+        - YouTube
+        - Netflix
+        - Spotify
+        - Disney+
+        - Apple Music
+        - SoundCloud
+        - Hulu
+        - HBO Max
+        - Amazon Prime
+        - Apple TV+
+        - Peacock
+        - Deezer
+        - Plex
+        - Steam
+        - PlayStation
+        - Xbox
+        - Roblox
+        - Epic Games
+        - Riot Games
+        - Battle.net
+        - EA / Origin
+        - Nintendo
+        - Minecraft
+        - Ubisoft
+        - GOG
+        - AWS
+        - Google Cloud
+        - Azure
+        - Cloudflare
+        - Vercel
+        - Netlify
+        - Heroku
+        - DigitalOcean
+        - Fastly
+        - Akamai
+        - Render
+        - Fly.io
+        - Railway
+        - Google Workspace
+        - Dropbox
+        - OneDrive
+        - Salesforce
+        - GitHub
+        - GitLab
+        - Bitbucket
+        - npm
+        - PyPI
+        - Docker Hub
+        - Sentry
+        - Datadog
+        - PagerDuty
+        - Jira
+        - Confluence
+        - Linear
+        - Notion
+        - Figma
+        - Supabase
+        - Firebase
+        - MongoDB Atlas
+        - PlanetScale
+        - Neon
+        - Postman
+        - Twilio
+        - SendGrid
+        - Mailchimp
+        - Intercom
+        - Zendesk
+        - HubSpot
+        - OpenAI
+        - Anthropic
+        - Google Gemini
+        - Midjourney
+        - Hugging Face
+        - Replicate
+        - Perplexity
+        - Cursor
+        - Stripe
+        - PayPal
+        - Shopify
+        - Square
+        - Coinbase
+        - Plaid
+        - Braintree
+        - Adyen
+    validations:
+      required: true
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options:
+        - "Minor — slow or partially broken"
+        - "Major — significantly degraded"
+        - "Total outage — completely unreachable"
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        ## 🏷️ REMINDER — Apply the service label NOW
+        Before you click **Submit new issue**, scroll up (or look to the right) and **select the label** matching the service you chose above.
+        **Issues without a label will not appear on NetPulse and will be closed automatically.**
+        **You MUST pick a label. This is not optional. Without it, your report does nothing.**
+  - type: textarea
+    id: details
+    attributes:
+      label: Additional Details
+      description: Optional — describe what you are experiencing in more detail.
+    validations:
+      required: false
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        > ⚠️ **Final reminder:** Did you add the service label? If not, go back and add it now. Reports without labels are ignored.
