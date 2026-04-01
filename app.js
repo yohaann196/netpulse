@@ -147,6 +147,10 @@ function render() {
 function toggle(id) { expanded = expanded === id ? null : id; render(); }
 function go(e, url) { e.stopPropagation(); window.open(url, '_blank', 'noopener'); }
 
+function openReportPicker() {
+  window.open(chooseUrl(), '_blank', 'noopener');
+}
+
 function setFilter(f, el) {
   filter = f;
   document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
