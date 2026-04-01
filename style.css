@@ -266,10 +266,12 @@ body {
 
 /* about button */
 .about-header-btn {
+  appearance: none;
+  -webkit-appearance: none;
   padding: 6px 14px;
   border-radius: var(--r);
-  border: 0.5px solid var(--border2);
-  background: transparent;
+  border: 1px solid var(--border2);
+  background: var(--raised);
   color: var(--muted);
   font-size: 13px;
   font-family: var(--sans);
@@ -278,7 +280,7 @@ body {
   white-space: nowrap;
   transition: all 0.13s;
 }
-.about-header-btn:hover { background: var(--raised); color: var(--text); }
+.about-header-btn:hover { background: var(--hint); color: var(--bg); }
 .about-header-btn:active { transform: scale(0.97); }
 
 /* modal overlay */

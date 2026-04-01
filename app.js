@@ -21,7 +21,7 @@ function blank(s) {
 }
 
 function chooseUrl() {
-  return GITHUB_REPO ? `https://github.com/${GITHUB_REPO}/issues/new/choose` : 'https://github.com';
+  return GITHUB_REPO ? `https://github.com/${GITHUB_REPO}/issues/new` : 'https://github.com';
 }
 
 function reportUrl(svc) {
@@ -39,7 +39,7 @@ function statusFrom(n) {
 
 function digest(svc, raw) {
   const now = Date.now();
-  const open = raw.filter(i => i.state === 'open' && (now - new Date(i.created_at).getTime()) < TWENTY_FOUR_HOURS_MS);
+  const open = raw.filter(i => (now - new Date(i.created_at).getTime()) < TWENTY_FOUR_HOURS_MS);
 
   const titles = open.slice(0, 4).map(i => {
     const t = i.title.replace(/^\[.+?\]\s*/, '');
@@ -204,7 +204,7 @@ async function boot() {
     // github api is CORS-safe on public repos, no proxy or backend needed
     // free tier rate limit: 60 req/hr per IP, way more than enough
     const res = await fetch(
-      `https://api.github.com/repos/${GITHUB_REPO}/issues?state=all&per_page=100&sort=created&direction=desc`,
+      `https://api.github.com/repos/${GITHUB_REPO}/issues?state=open&per_page=100&sort=created&direction=desc`,
       { headers: { Accept: 'application/vnd.github.v3+json' } }
     );
 
