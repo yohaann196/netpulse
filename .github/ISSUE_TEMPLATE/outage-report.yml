@@ -4,10 +4,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        ## ⚠️ IMPORTANT — You MUST apply a label before submitting
-        **Your report will NOT be processed unless you manually select the correct service label on the right-hand side of this page.**
-        Labels are how NetPulse links your report to the affected service.
-        **⛔ Do NOT submit without picking a label. Unlabelled reports are ignored.**
+        ⚠️ If you got here from the main "↑ report outage" button, you must manually select the matching service label on the right side of this page before submitting. If you got here by clicking "↑ report outage" inside a specific service card, the label has already been applied automatically — just submit.
   - type: dropdown
     id: service
     attributes:
@@ -126,14 +123,6 @@ body:
         - "Total outage — completely unreachable"
     validations:
       required: true
-  - type: markdown
-    attributes:
-      value: |
-        ---
-        ## 🏷️ REMINDER — Apply the service label NOW
-        Before you click **Submit new issue**, scroll up (or look to the right) and **select the label** matching the service you chose above.
-        **Issues without a label will not appear on NetPulse and will be closed automatically.**
-        **You MUST pick a label. This is not optional. Without it, your report does nothing.**
   - type: textarea
     id: details
     attributes:
@@ -141,8 +130,3 @@ body:
       description: Optional — describe what you are experiencing in more detail.
     validations:
       required: false
-  - type: markdown
-    attributes:
-      value: |
-        ---
-        > ⚠️ **Final reminder:** Did you add the service label? If not, go back and add it now. Reports without labels are ignored.
