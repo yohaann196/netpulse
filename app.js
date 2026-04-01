@@ -6,6 +6,8 @@ let expanded = null;
 let live = SERVICES.map(blank);
 const t0 = Date.now();
 
+const TWENTY_FOUR_HOURS_MS = 86_400_000;
+
 const LABELS = { ok:'Operational', issues:'Degraded', down:'Major Outage', investigating:'Investigating' };
 const CLASSES = { ok:'s-ok', issues:'s-issues', down:'s-down', investigating:'s-investigating' };
 const COLORS = { ok:'#639922', issues:'#BA7517', down:'#E24B4A', investigating:'#378ADD' };
@@ -36,7 +38,8 @@ function statusFrom(n) {
 }
 
 function digest(svc, raw) {
-  const open = raw.filter(i => i.state === 'open');
+  const now = Date.now();
+  const open = raw.filter(i => i.state === 'open' && (now - new Date(i.created_at).getTime()) < TWENTY_FOUR_HOURS_MS);
 
   const titles = open.slice(0, 4).map(i => {
     const t = i.title.replace(/^\[.+?\]\s*/, '');
@@ -44,7 +47,6 @@ function digest(svc, raw) {
   });
 
   // bucket into hourly slots for the sparkline
-  const now = Date.now();
   const hist = Array(24).fill(0);
   raw.forEach(i => {
     const age = (now - new Date(i.created_at).getTime()) / 3_600_000;
