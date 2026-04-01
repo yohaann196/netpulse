@@ -151,6 +151,18 @@ function openReportPicker() {
   window.open(chooseUrl(), '_blank', 'noopener');
 }
 
+function openAbout() {
+  document.getElementById('about-repo-link').href = GITHUB_REPO
+    ? `https://github.com/${GITHUB_REPO}`
+    : 'https://github.com';
+  document.getElementById('about-modal').classList.add('open');
+}
+
+function closeAbout(e) {
+  if (e instanceof Event && e.target !== document.getElementById('about-modal')) return;
+  document.getElementById('about-modal').classList.remove('open');
+}
+
 function setFilter(f, el) {
   filter = f;
   document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
