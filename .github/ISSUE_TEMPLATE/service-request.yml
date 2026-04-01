@@ -1,0 +1,41 @@
+name: Service Request
+description: Request a new service to be added to NetPulse.
+labels:
+  - service-request
+body:
+  - type: input
+    id: service-name
+    attributes:
+      label: Service Name
+      placeholder: e.g. Cloudflare
+    validations:
+      required: true
+  - type: input
+    id: website-url
+    attributes:
+      label: Website URL
+      placeholder: e.g. https://cloudflare.com
+    validations:
+      required: true
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options:
+        - social
+        - streaming
+        - gaming
+        - cloud
+        - developer
+        - finance
+        - ai
+        - other
+    validations:
+      required: true
+  - type: textarea
+    id: reason
+    attributes:
+      label: Why add it?
+      description: Optional — tell us why this service should be tracked.
+    validations:
+      required: false
