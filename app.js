@@ -21,7 +21,7 @@ function blank(s) {
 }
 
 function chooseUrl() {
-  return GITHUB_REPO ? `https://github.com/${GITHUB_REPO}/issues/new` : 'https://github.com';
+  return GITHUB_REPO ? `https://github.com/${GITHUB_REPO}/issues/new/choose` : 'https://github.com';
 }
 
 function reportUrl(svc) {
